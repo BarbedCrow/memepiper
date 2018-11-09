@@ -1,16 +1,11 @@
 {
-  "name": "meme",
+  "name": "memepiper",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "homepage": "https://barbedcrow.github.io/memepiper/",
   "scripts": {
     "start": "cross-env PORT=10888 react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "deploy": "gh-pages -d build",
-    "predeploy": "npm run build"
+    "build": "react-scripts build"
   },
   "keywords": [],
   "author": "",
