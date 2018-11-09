@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env PORT=10888 react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build",
+    "predeploy": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +26,7 @@
     "core-js": "^2.5.7",
     "prop-types": "^15.6.2",
     "react": "^16.6.1",
-    "react-dom": "^16.6.1"
+    "react-dom": "^16.6.1",
+    "gh-pages": "^1.2.0"
   }
 }
