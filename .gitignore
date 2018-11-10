@@ -15,6 +15,7 @@ package-lock.json
 /build
 */out/**
 */build/**
+**/config.properties
 
 .vscode
 .idea
