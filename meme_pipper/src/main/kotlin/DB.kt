@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 object Post: LongIdTable() {
-    val idGroup = long("idGroup")
+    val idGroup = varchar("idGroup", 128)
     val urlGroup = varchar("urlGroup", 256)
     val urlPost = varchar("urlPost", 256)
     val urlPic = varchar("urlPic", 256)
@@ -18,8 +18,8 @@ object Post: LongIdTable() {
 }
 
 object Group: LongIdTable() {
-    val url = varchar("url", 200)
     val lastRead = datetime("lastRead")
+    val uid = varchar("id", 128)
 }
 
 object User: LongIdTable() {
@@ -45,7 +45,7 @@ class GroupEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<GroupEntity>(Group)
 
     var lastRead by Group.lastRead
-    var url by Group.url
+    var uid by Group.uid
 }
 
 class UserEntity(id: EntityID<Long>) : LongEntity(id) {
@@ -59,27 +59,3 @@ fun createTables()  = transaction {
     SchemaUtils.create(Post, Group, User)
 }
 
-fun WritePostsToDB(posts: List<PostRequest>){
-    for(post in posts){
-        WritePostToDB(post)
-    }
-}
-
-fun WritePostToDB(post: PostRequest){
-    print(post.urlPic)
-    addPost(post)
-}
-
-fun addPost(postReq: PostRequest) = transaction {
-    PostEntity.new {
-
-        this.idGroup = postReq.idGroup
-        this.group = GroupEntity[idGroup]
-        this.urlGroup = postReq.urlGroup
-        this.urlPost = postReq.urlPost
-        this.urlPic = postReq.urlPic
-        this.text = postReq.text
-//            this.index
-//            this.tag
-    }
-}

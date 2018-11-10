@@ -1,4 +1,6 @@
 import IdApi.Companion.build
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.*
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
@@ -12,6 +14,7 @@ import org.jetbrains.exposed.sql.Database
 import java.util.*
 import kotlin.concurrent.schedule
 
+val initialGroupIds = listOf("oldlentach", "mnogoanekdot")
 const val UPDATE_FREQUENCY_MS = 5 * 1000L
 val timer = Timer()
 
@@ -28,7 +31,19 @@ fun Application.main() {
 
 fun initDB() {
     Database.connect("jdbc:mysql://localhost:3306/memebd", driver = "com.mysql.jdbc.Driver", user = "meme", password = "123333321")
+    TrySetInitialGroupIds()
     createTables()
+}
+
+fun TrySetInitialGroupIds(){
+    var groupIds = GroupEntity.all().map { it.uid }
+    for(groupId in initialGroupIds){
+        if (groupIds.contains(groupId)){
+            continue
+        }
+
+        addGroup(groupId)
+    }
 }
 
 fun Application.routings() {
@@ -65,12 +80,23 @@ fun runSchedule(){
     }
 }
 
-data class PostRequest(val idGroup : Long, val urlGroup: String, val urlPost: String, val urlPic: String, val text: String)
+fun WritePostsToDB(posts: List<PostRequest>){
+    for(post in posts){
+        WritePostToDB(post)
+    }
+}
+
+fun WritePostToDB(post: PostRequest){
+    print(post.urlPic)
+    addPost(post)
+}
+
+data class PostRequest(val idGroup : String, val urlGroup: String, val urlPost: String, val urlPic: String, val text: String)
 
 val loader = AutoLoader()
 class AutoLoader {
     suspend fun getPosts(groupNames: List<String>): List<PostRequest> {
-        val req = PostRequest(123,"urlGroup","urlPost", "urlPic", "text")
+        val req = PostRequest("oldlentach","urlGroup","urlPost", "urlPic", "text")
         return listOf(req)
     }
 }

@@ -31,13 +31,6 @@ class IdApi(val uid: Long) {
         Response(ans.count(), ans)
     }
 
-    fun addGroup(url: String) : Long = transaction {
-        GroupEntity.new {
-            this.url = url
-            this.lastRead = DateTime.now(DateTimeZone.UTC)
-        }.id.value
-    }
-
     fun addUser(): Long = transaction {
         UserEntity.new {
             this.vkId = uid
@@ -51,6 +44,5 @@ class IdApi(val uid: Long) {
         user.groups = mapper.writeValueAsString(oldGroups + (groupId.toString()))
         user.flush()
     }
-
 
 }
