@@ -4,16 +4,22 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 object Post: LongIdTable() {
-    val url = varchar("url", 200)
+    val idGroup = varchar("idGroup", 128)
+    val urlGroup = varchar("urlGroup", 256)
+    val urlPost = varchar("urlPost", 256)
+    val urlPic = varchar("urlPic", 256)
+    var text = varchar("text", 4096)
     val group = reference("group", Group, ReferenceOption.CASCADE)
-    val tags = text("tags").default("")
+    val tag = varchar("tag", 256).default("")
+    var index = text("index").default("")
 }
 
 object Group: LongIdTable() {
-    val url = varchar("url", 200)
     val lastRead = datetime("lastRead")
+    val uid = varchar("id", 128)
 }
 
 object User: LongIdTable() {
@@ -25,16 +31,21 @@ object User: LongIdTable() {
 class PostEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<PostEntity>(Post)
 
-    var url by Post.url
+    var idGroup by Post.idGroup
+    var urlGroup by Post.urlGroup
+    var urlPost by Post.urlPost
+    var urlPic by Post.urlPic
+    var text by Post.text
     var group by GroupEntity referencedOn Post.group
-    var tags by Post.group
+    var tag by Post.tag
+    var index by Post.index
 }
 
 class GroupEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<GroupEntity>(Group)
 
     var lastRead by Group.lastRead
-    var url by Group.url
+    var uid by Group.uid
 }
 
 class UserEntity(id: EntityID<Long>) : LongEntity(id) {
@@ -47,3 +58,4 @@ fun createTables()  = transaction {
     addLogger(StdOutSqlLogger)
     SchemaUtils.create(Post, Group, User)
 }
+

@@ -4,6 +4,8 @@ import io.ktor.application.Application
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
+import java.util.*
+import kotlin.concurrent.schedule
 
 class BadRequestException : Exception()
 
@@ -11,6 +13,7 @@ data class Response(val count: Int, val page: List<String>)
 
 class IdApi(val uid: Long) {
     val mapper = jacksonObjectMapper()
+
 
     companion object {
         fun build(rowId: String?): IdApi {
@@ -24,15 +27,8 @@ class IdApi(val uid: Long) {
     fun getPages() : Response  = transaction {
         val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
         val groups = mapper.readValue<List<String>>(user.groups).map { GroupEntity[it.toLong()].id }
-        val ans = PostEntity.find { Post.group inList groups }.map { it.url }
+        val ans = PostEntity.find { Post.group inList groups }.map { it.urlGroup }
         Response(ans.count(), ans)
-    }
-
-    fun addGroup(url: String) : Long = transaction {
-        GroupEntity.new {
-            this.url = url
-            this.lastRead = DateTime.now(DateTimeZone.UTC)
-        }.id.value
     }
 
     fun addUser(): Long = transaction {
@@ -49,11 +45,4 @@ class IdApi(val uid: Long) {
         user.flush()
     }
 
-    fun addPost(url: String, groupId: Long) = transaction {
-        PostEntity.new {
-            this.group = GroupEntity[groupId]
-            this.url = url
-            this.tags
-        }
-    }
 }
