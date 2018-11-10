@@ -19,7 +19,7 @@ object Prop {
 }
 
 val initialGroupIds = listOf("-29534144", "-25670128", "-92337511", "-52537634", "-72495085", "-33414947", "-51016572", "-4ch", "-86854270", "-44781847")
-const val UPDATE_FREQUENCY_MS = 100000L
+const val UPDATE_FREQUENCY_MS = 1_000_000L
 val timer = Timer()
 
 @Suppress("unused")
