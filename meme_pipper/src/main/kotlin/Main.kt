@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import kotlin.concurrent.schedule
 
-val initialGroupIds = listOf("oldlentach", "mnogoanekdot", "abstract_memes", "paper.comics", "cyanideandhappiness", "tnull", "mhkon", "designmdk", "4ch", "whydvach", "thesmolny")
+val initialGroupIds = listOf("-29534144", "-25670128", "-92337511", "-52537634", "-72495085", "-33414947", "-51016572", "-4ch", "-86854270", "-44781847")
 const val UPDATE_FREQUENCY_MS = 5 * 1000L
 val timer = Timer()
 
@@ -95,7 +95,7 @@ data class PostRequest(val groupDomain : String, val postId: String, val urlPic:
 val loader = AutoLoader()
 class AutoLoader {
     suspend fun getPosts(groupNames: List<String>): List<PostRequest> {
-        val req = PostRequest("oldlentach","postId", "urlPic", "text")
+        val req = PostRequest("-29534144","postId", "urlPic", "text")
         return listOf(req)
     }
 }
