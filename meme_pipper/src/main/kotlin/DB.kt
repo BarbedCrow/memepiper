@@ -17,7 +17,7 @@ object Post: LongIdTable() {
 
 object Group: LongIdTable() {
     val lastRead = datetime("lastRead")
-    val uid = varchar("id", 128)
+    val domain = varchar("domain", 128)
 }
 
 object User: LongIdTable() {
@@ -42,7 +42,7 @@ class GroupEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<GroupEntity>(Group)
 
     var lastRead by Group.lastRead
-    var uid by Group.uid
+    var domain by Group.domain
 }
 
 class UserEntity(id: EntityID<Long>) : LongEntity(id) {

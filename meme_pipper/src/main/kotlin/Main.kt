@@ -34,7 +34,7 @@ fun initDB() {
 }
 
 fun TrySetInitialGroupIds(){
-    var groupIds = GroupEntity.all().map { it.uid }
+    var groupIds = GroupEntity.all().map { it.domain }
     for(groupId in initialGroupIds){
         if (groupIds.contains(groupId)){
             continue

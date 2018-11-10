@@ -6,7 +6,7 @@ fun addPost(postReq: PostRequest) = transaction {
     PostEntity.new {
 
         this.groupDomain = postReq.groupDomain
-        this.group = GroupEntity.find { Group.uid eq groupDomain }.firstOrNull() ?: throw BadRequestException()
+        this.group = GroupEntity.find { Group.domain eq groupDomain }.firstOrNull() ?: throw BadRequestException()
         this.postId = postReq.postId
         this.urlPic = postReq.urlPic
         this.text = postReq.text
@@ -15,9 +15,9 @@ fun addPost(postReq: PostRequest) = transaction {
     }
 }
 
-fun addGroup(id : String) : Long = transaction {
+fun addGroup(domain : String) : Long = transaction {
     GroupEntity.new {
-        this.uid = id
+        this.domain = domain
         this.lastRead = DateTime.now(DateTimeZone.UTC)
     }.id.value
 }
