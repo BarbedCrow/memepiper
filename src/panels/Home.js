@@ -7,16 +7,6 @@ const Home = props => (
 	<Panel id={props.id}>
 		<PanelHeader>Meme piper</PanelHeader>
 
-        {props.fetchedUser.id &&
-        <Group title="User Data Fetched with VK Connect">
-            <ListItem
-                before={<Avatar src={props.fetchedUser.photo_200}/>}
-                description={props.fetchedUser.city.title}
-            >
-                {`${props.fetchedUser.first_name} ${props.fetchedUser.last_name}`}
-            </ListItem>
-        </Group>}
-
 		<Group>
             <p>Это мем!</p>
             <CellButton className="postImg" onClick={props.go} data-to="similar-memes">
