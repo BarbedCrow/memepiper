@@ -12,7 +12,8 @@ class App extends React.Component {
 
 		this.state = {
 			activePanel: 'home',
-            fetchedUser: null
+            fetchedUser: null,
+            similarId: 0,
 		};
 	}
 
@@ -31,14 +32,20 @@ class App extends React.Component {
     }
 
 	go = (e) => {
-		this.setState({ activePanel: e.currentTarget.dataset.to })
+	    this.setState({ activePanel: e.currentTarget.dataset.to });
 	};
+
+	openSimilar = (e) => {
+	    this.setState({ activePanel: e.currentTarget.dataset.to });
+	    this.setState({ similarId: e.currentTarget.dataset.similar });
+    };
+
 
 	render() {
 		return (
 			<View activePanel={this.state.activePanel}>
-				<Home id="home" fetchedUser={this.state.fetchedUser} go={this.go} />
-				<SimilarMemes id="similar-memes" go={this.go} />
+				<Home id="home" fetchedUser={this.state.fetchedUser} go={this.go} openSimilar = {this.openSimilar}/>
+				<SimilarMemes id="similar-memes" go={this.go} similarId={this.state.similarId} openSimilar = {this.openSimilar}/>
 			</View>
 		);
 	}
