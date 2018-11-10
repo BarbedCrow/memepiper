@@ -14,6 +14,21 @@ class App extends React.Component {
             activePanel: 'home',
             fetchedUser: null,
             similarId: 0,
+            memes: [{
+                "id": 1,
+                "text": "Text 1",
+                "url": "https://pp.userapi.com/c830509/v830509583/1d7a60/NRjOKwLLy-8.jpg"
+            },
+            {
+                "id": 2,
+                "text": "Text 2",
+                "url": "https://pp.userapi.com/c830509/v830509583/1d7a60/NRjOKwLLy-8.jpg"
+            }],
+            similarMemes: [{
+                "id": 4,
+                "text": "Similar Pikachu",
+                "url": "https://i.uaportal.com/gallery/2018/11/9/13.jpg"
+            }]
         };
     }
 
@@ -36,6 +51,7 @@ class App extends React.Component {
     };
 
     openSimilar = (e) => {
+        // TODO: get request for similars here!
         this.setState({activePanel: e.currentTarget.dataset.to});
         this.setState({similarId: e.currentTarget.dataset.similar});
     };
@@ -44,9 +60,10 @@ class App extends React.Component {
     render() {
         return (
             <View activePanel={this.state.activePanel}>
-                <Home id="home" fetchedUser={this.state.fetchedUser} go={this.go} openSimilar={this.openSimilar}/>
+                <Home id="home" fetchedUser={this.state.fetchedUser} go={this.go} openSimilar={this.openSimilar}
+                      memes={this.state.memes}/>
                 <SimilarMemes id="similar-memes" go={this.go} similarId={this.state.similarId}
-                              openSimilar={this.openSimilar}/>
+                              openSimilar={this.openSimilar} similarMemes={this.state.similarMemes}/>
             </View>
         );
     }

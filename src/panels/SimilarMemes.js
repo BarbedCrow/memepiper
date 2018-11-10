@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Panel, PanelHeader, HeaderButton} from '@vkontakte/vkui';
+import {Panel, PanelHeader, HeaderButton, Group} from '@vkontakte/vkui';
 import "./postImg.css"
 import Icon28ChevronBack from '@vkontakte/icons/dist/28/chevron_back';
 
@@ -13,7 +13,15 @@ const SimilarMemes = props => (
         >
             Similar memes
         </PanelHeader>
-        <img className="postImg" src="https://i.uaportal.com/gallery/2018/11/9/13.jpg"/>
+
+        {/*<img className="postImg" src="https://i.uaportal.com/gallery/2018/11/9/13.jpg"/>*/}
+
+        {props.similarMemes.map((meme) => (
+            <Group>
+                <p>{meme.text}</p>
+                <img className="postImg" src={meme.url}/>
+            </Group>
+        ))}
     </Panel>
 );
 

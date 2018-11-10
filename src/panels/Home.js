@@ -7,18 +7,30 @@ const Home = props => (
     <Panel id={props.id}>
         <PanelHeader>Meme piper</PanelHeader>
 
-        <Group>
-            <p>Это мем!</p>
-            <CellButton className="postImg" onClick={props.openSimilar} data-to="similar-memes" data-similar="1">
-                <img className="postImg" src="https://pp.userapi.com/c830509/v830509583/1d7a60/NRjOKwLLy-8.jpg"/>
-            </CellButton>
-        </Group>
-        <Group>
-            <p>Это второй мем!</p>
-            <CellButton className="postImg" onClick={props.openSimilar} data-to="similar-memes" data-similar="2">
-                <img className="postImg" src="https://pp.userapi.com/c846021/v846021363/1243cf/MooEo9q0Vdo.jpg"/>
-            </CellButton>
-        </Group>
+
+        {props.memes.map((meme) => (
+            <Group>
+                <p>{meme.text}</p>
+                <CellButton className="postImg" onClick={props.openSimilar} data-to="similar-memes"
+                            data-similar={meme.id}>
+                    <img className="postImg" src={meme.url}/>
+                </CellButton>
+            </Group>
+        ))}
+
+
+        {/*<Group>*/}
+        {/*<p>Это мем!</p>*/}
+        {/*<CellButton className="postImg" onClick={props.openSimilar} data-to="similar-memes" data-similar="1">*/}
+        {/*<img className="postImg" src="https://pp.userapi.com/c830509/v830509583/1d7a60/NRjOKwLLy-8.jpg"/>*/}
+        {/*</CellButton>*/}
+        {/*</Group>*/}
+        {/*<Group>*/}
+        {/*<p>Это второй мем!</p>*/}
+        {/*<CellButton className="postImg" onClick={props.openSimilar} data-to="similar-memes" data-similar="2">*/}
+        {/*<img className="postImg" src="https://pp.userapi.com/c846021/v846021363/1243cf/MooEo9q0Vdo.jpg"/>*/}
+        {/*</CellButton>*/}
+        {/*</Group>*/}
     </Panel>
 );
 
