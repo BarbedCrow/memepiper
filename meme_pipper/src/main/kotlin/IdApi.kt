@@ -61,6 +61,7 @@ class IdApi(val uid: Long) {
                 continue
             }
 
+            addSeenPost(post.postId)
             postsToSend.add(PostRequest(post.groupDomain, post.postId, post.urlPic, post.text))
             if (postsToSend.size == MEMES_COUNT){
                 break
@@ -68,6 +69,11 @@ class IdApi(val uid: Long) {
         }
 
         postsToSend
+    }
+
+    fun getMemesSimilarTo(postId: String) = transaction {
+        val post = PostEntity.find { Post.postId eq postId }.first()
+        val similarPosts = PostEntity.find{Post.tag eq post.tag}.take(MEMES_COUNT)
     }
 
 }
