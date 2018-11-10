@@ -13,6 +13,8 @@ package-lock.json
 
 # Prod Bundle
 /build
+*/out/**
+*/build/**
 
 .vscode
 .idea
