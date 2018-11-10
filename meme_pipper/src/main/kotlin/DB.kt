@@ -4,12 +4,10 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
 
 object Post: LongIdTable() {
-    val idGroup = varchar("idGroup", 128)
-    val urlGroup = varchar("urlGroup", 256)
-    val urlPost = varchar("urlPost", 256)
+    val groupDomain = varchar("groupDomain", 128)
+    val postId = varchar("postId", 256)
     val urlPic = varchar("urlPic", 256)
     var text = varchar("text", 4096)
     val group = reference("group", Group, ReferenceOption.CASCADE)
@@ -31,9 +29,8 @@ object User: LongIdTable() {
 class PostEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<PostEntity>(Post)
 
-    var idGroup by Post.idGroup
-    var urlGroup by Post.urlGroup
-    var urlPost by Post.urlPost
+    var groupDomain by Post.groupDomain
+    var postId by Post.postId
     var urlPic by Post.urlPic
     var text by Post.text
     var group by GroupEntity referencedOn Post.group

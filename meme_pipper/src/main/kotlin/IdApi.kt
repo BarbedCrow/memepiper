@@ -1,19 +1,15 @@
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.application.Application
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
-import java.util.*
-import kotlin.concurrent.schedule
 
 class BadRequestException : Exception()
+
+const val MEMES_COUNT = 20
 
 data class Response(val count: Int, val page: List<String>)
 
 class IdApi(val uid: Long) {
     val mapper = jacksonObjectMapper()
-
 
     companion object {
         fun build(rowId: String?): IdApi {
@@ -27,7 +23,7 @@ class IdApi(val uid: Long) {
     fun getPages() : Response  = transaction {
         val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
         val groups = mapper.readValue<List<String>>(user.groups).map { GroupEntity[it.toLong()].id }
-        val ans = PostEntity.find { Post.group inList groups }.map { it.urlGroup }
+        val ans = PostEntity.find { Post.group inList groups }.map { it.groupDomain }
         Response(ans.count(), ans)
     }
 
@@ -38,11 +34,16 @@ class IdApi(val uid: Long) {
         }.id.value
     }
 
-    fun addGroupToUser(groupId: Long) = transaction {
+    fun addGroupToUser(groupId: String) = transaction {
         val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
         val oldGroups = mapper.readValue<List<String>>(user.groups)
-        user.groups = mapper.writeValueAsString(oldGroups + (groupId.toString()))
+        user.groups = mapper.writeValueAsString(oldGroups + (groupId))
         user.flush()
+    }
+
+    fun GetMemes(){
+        val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
+        val posts = PostEntity.all()
     }
 
 }

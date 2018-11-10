@@ -1,6 +1,4 @@
 import IdApi.Companion.build
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.*
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
@@ -14,7 +12,7 @@ import org.jetbrains.exposed.sql.Database
 import java.util.*
 import kotlin.concurrent.schedule
 
-val initialGroupIds = listOf("oldlentach", "mnogoanekdot")
+val initialGroupIds = listOf("oldlentach", "mnogoanekdot", "abstract_memes", "paper.comics", "cyanideandhappiness", "tnull", "mhkon", "designmdk" )
 const val UPDATE_FREQUENCY_MS = 5 * 1000L
 val timer = Timer()
 
@@ -31,8 +29,8 @@ fun Application.main() {
 
 fun initDB() {
     Database.connect("jdbc:mysql://localhost:3306/memebd", driver = "com.mysql.jdbc.Driver", user = "meme", password = "123333321")
-    TrySetInitialGroupIds()
     createTables()
+    TrySetInitialGroupIds()
 }
 
 fun TrySetInitialGroupIds(){
@@ -91,7 +89,7 @@ fun WritePostToDB(post: PostRequest){
     addPost(post)
 }
 
-data class PostRequest(val idGroup : String, val urlGroup: String, val urlPost: String, val urlPic: String, val text: String)
+data class PostRequest(val groupDomain : String, val urlGroup: String, val postId: String, val urlPic: String, val text: String)
 
 val loader = AutoLoader()
 class AutoLoader {
