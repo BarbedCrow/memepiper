@@ -8,6 +8,7 @@ const val MEMES_COUNT = 20
 
 data class Response(val count: Int, val page: List<String>)
 
+@Suppress("unused")
 class IdApi(val uid: Long) {
     val mapper = jacksonObjectMapper()
 
@@ -31,6 +32,8 @@ class IdApi(val uid: Long) {
         UserEntity.new {
             this.vkId = uid
             this.groups = mapper.writeValueAsString(emptyList<String>())
+            this.seenPostIds = mapper.writeValueAsString(emptyList<String>())
+
         }.id.value
     }
 

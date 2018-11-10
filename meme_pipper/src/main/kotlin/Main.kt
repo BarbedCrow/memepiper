@@ -10,34 +10,63 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.FileInputStream
 import java.util.*
 import kotlin.concurrent.schedule
 
+object Prop {
+    val prop = Properties()
+}
+
 val initialGroupIds = listOf("-29534144", "-25670128", "-92337511", "-52537634", "-72495085", "-33414947", "-51016572", "-4ch", "-86854270", "-44781847")
-const val UPDATE_FREQUENCY_MS = 5 * 1000L
+const val UPDATE_FREQUENCY_MS = 100000L
 val timer = Timer()
 
+@Suppress("unused")
 fun Application.main() {
+    initProperties()
     initDB()
-    this.routings()
+    routings()
     runSchedule()
 }
-
 //fun main(args: Array<String>) {
-//    runSchedule()
-//
+//    runBlocking {
+//        GlobalScope.launch {
+//            val groupName = listOf("oldlentach", "paper.comics")
+//            initProperties()
+//            createUrl(groupName)
+//            getPosts(groupName)
+//        }
+//    }
 //}
 
-fun initDB() {
-    Database.connect("jdbc:mysql://localhost:3306/memebd", driver = "com.mysql.jdbc.Driver", user = "meme", password = "123333321")
-    createTables()
-    TrySetInitialGroupIds()
+//fun main(args: Array<String>) {
+//    initDB()
+//    val idApi = IdApi(1)
+//    idApi.addUser()
+//    val groupId = idApi.addGroup("hui")
+//    idApi.addGroupToUser(groupId)
+//    idApi.addPost("zalupa", groupId)
+
+fun initProperties(){
+    Prop.prop.load(FileInputStream("src/main/resources/config.properties"))
 }
 
-fun TrySetInitialGroupIds() = transaction {
-    var groupIds = GroupEntity.all().map { it.domain }
-    for(groupId in initialGroupIds){
-        if (groupIds.contains(groupId)){
+fun initDB() {
+    Database.connect(
+        "jdbc:mysql://localhost:3306/memebd",
+        driver = "com.mysql.jdbc.Driver",
+        user = "meme",
+        password = "123333321"
+    )
+    createTables()
+    trySetInitialGroupIds()
+}
+
+fun trySetInitialGroupIds() = transaction {
+    val groupIds = GroupEntity.all().map { it.domain }
+    for (groupId in initialGroupIds) {
+        if (groupIds.contains(groupId)) {
             continue
         }
 
@@ -49,9 +78,6 @@ fun Application.routings() {
     routing {
         install(ContentNegotiation) {
             gson {}
-        }
-        get("hu"){
-
         }
         get("/get_page/{id}") {
             val id = call.parameters["id"]
@@ -65,10 +91,16 @@ fun Application.routings() {
                 build(id).getMemes()
             }
         }
+        get("/add_user/{id}") {
+            val id = call.parameters["id"]
+            wrapRespond {
+                build(id).addUser()
+            }
+        }
     }
 }
 
-suspend fun PipelineContext<Unit,ApplicationCall>.wrapRespond(build: () -> Any) {
+suspend fun PipelineContext<Unit, ApplicationCall>.wrapRespond(build: () -> Any) {
     try {
         call.respond(build())
     } catch (e: BadRequestException) {
@@ -76,32 +108,30 @@ suspend fun PipelineContext<Unit,ApplicationCall>.wrapRespond(build: () -> Any) 
     }
 }
 
-fun runSchedule(){
-    timer.schedule(0, UPDATE_FREQUENCY_MS){
-        val groupNames = listOf("hui")
+fun runSchedule() {
+    timer.schedule(0, UPDATE_FREQUENCY_MS) {
         GlobalScope.launch {
-            WritePostsToDB(loader.getPosts(groupNames))
+            writePostsToDB(getPosts(initialGroupIds))
         }
     }
 }
 
-fun WritePostsToDB(posts: List<PostRequest>){
-    for(post in posts){
-        WritePostToDB(post)
+fun writePostsToDB(posts: List<PostRequest>) {
+    for (post in posts) {
+        writePostToDB(post)
     }
 }
 
-fun WritePostToDB(post: PostRequest){
+fun writePostToDB(post: PostRequest) {
     print(post.urlPic)
     addPost(post)
 }
 
-data class PostRequest(val groupDomain : String, val postId: String, val urlPic: String, val text: String)
+data class PostRequest(
+    val groupDomain: String,
+    val postId: String,
+    val urlPic: String,
+    val text: String
+)
 
-val loader = AutoLoader()
-class AutoLoader {
-    suspend fun getPosts(groupNames: List<String>): List<PostRequest> {
-        val req = PostRequest("-29534144","postId", "urlPic", "text")
-        return listOf(req)
-    }
-}
+//val loader = AutoLoader()
