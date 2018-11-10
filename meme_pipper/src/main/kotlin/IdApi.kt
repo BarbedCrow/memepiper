@@ -34,16 +34,37 @@ class IdApi(val uid: Long) {
         }.id.value
     }
 
-    fun addGroupToUser(groupId: String) = transaction {
+    fun addSeenPost(postId : String) = transaction {
         val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
-        val oldGroups = mapper.readValue<List<String>>(user.groups)
-        user.groups = mapper.writeValueAsString(oldGroups + (groupId))
+        val seenPostIds = mapper.readValue<List<String>>(user.seenPostIds)
+        user.seenPostIds = mapper.writeValueAsString(seenPostIds + postId)
         user.flush()
     }
 
-    fun GetMemes(){
+    fun addGroupToUser(groupId: String) = transaction {
         val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
+        val oldGroups = mapper.readValue<List<String>>(user.groups)
+        user.groups = mapper.writeValueAsString(oldGroups + groupId)
+        user.flush()
+    }
+
+    fun GetMemes() : List<PostRequest>{
+        val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
+        val seenPostIds = mapper.readValue<List<String>>(user.seenPostIds)
         val posts = PostEntity.all()
+        var postsToSend = mutableListOf<PostRequest>()
+        for (post in posts){
+            if(seenPostIds.contains(post.postId)){
+                continue
+            }
+
+            postsToSend.add(PostRequest(post.groupDomain, post.postId, post.urlPic, post.text))
+            if (postsToSend.size == MEMES_COUNT){
+                break
+            }
+        }
+
+        return postsToSend
     }
 
 }

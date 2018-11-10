@@ -9,6 +9,7 @@ import io.ktor.util.pipeline.PipelineContext
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -33,7 +34,7 @@ fun initDB() {
     TrySetInitialGroupIds()
 }
 
-fun TrySetInitialGroupIds(){
+fun TrySetInitialGroupIds() = transaction {
     var groupIds = GroupEntity.all().map { it.domain }
     for(groupId in initialGroupIds){
         if (groupIds.contains(groupId)){
@@ -89,12 +90,12 @@ fun WritePostToDB(post: PostRequest){
     addPost(post)
 }
 
-data class PostRequest(val groupDomain : String, val urlGroup: String, val postId: String, val urlPic: String, val text: String)
+data class PostRequest(val groupDomain : String, val postId: String, val urlPic: String, val text: String)
 
 val loader = AutoLoader()
 class AutoLoader {
     suspend fun getPosts(groupNames: List<String>): List<PostRequest> {
-        val req = PostRequest("oldlentach","urlGroup","urlPost", "urlPic", "text")
+        val req = PostRequest("oldlentach","postId", "urlPic", "text")
         return listOf(req)
     }
 }

@@ -12,7 +12,7 @@ object Post: LongIdTable() {
     var text = varchar("text", 4096)
     val group = reference("group", Group, ReferenceOption.CASCADE)
     val tag = varchar("tag", 256).default("")
-    var index = text("index").default("")
+    var index = text("index").nullable()
 }
 
 object Group: LongIdTable() {
@@ -24,6 +24,7 @@ object User: LongIdTable() {
     val vkId = long("vkId")
     //List<String>
     val groups = text("groupses")
+    val seenPostIds = text("seenPostIds")
 }
 
 class PostEntity(id: EntityID<Long>) : LongEntity(id) {
@@ -49,6 +50,7 @@ class UserEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<UserEntity>(User)
     var vkId by User.vkId
     var groups by User.groups
+    var seenPostIds by User.seenPostIds
 }
 
 fun createTables()  = transaction {
