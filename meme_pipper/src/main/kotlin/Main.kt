@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import kotlin.concurrent.schedule
 
-val initialGroupIds = listOf("oldlentach", "mnogoanekdot", "abstract_memes", "paper.comics", "cyanideandhappiness", "tnull", "mhkon", "designmdk" )
+val initialGroupIds = listOf("oldlentach", "mnogoanekdot", "abstract_memes", "paper.comics", "cyanideandhappiness", "tnull", "mhkon", "designmdk", "4ch", "whydvach", "thesmolny")
 const val UPDATE_FREQUENCY_MS = 5 * 1000L
 val timer = Timer()
 
