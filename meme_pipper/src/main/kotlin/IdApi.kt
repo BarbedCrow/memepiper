@@ -1,19 +1,16 @@
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.application.Application
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
-import java.util.*
-import kotlin.concurrent.schedule
 
 class BadRequestException : Exception()
 
+const val MEMES_COUNT = 20
+
 data class Response(val count: Int, val page: List<String>)
 
+@Suppress("unused")
 class IdApi(val uid: Long) {
     val mapper = jacksonObjectMapper()
-
 
     companion object {
         fun build(rowId: String?): IdApi {
@@ -27,7 +24,7 @@ class IdApi(val uid: Long) {
     fun getPages() : Response  = transaction {
         val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
         val groups = mapper.readValue<List<String>>(user.groups).map { GroupEntity[it.toLong()].id }
-        val ans = PostEntity.find { Post.group inList groups }.map { it.urlGroup }
+        val ans = PostEntity.find { Post.group inList groups }.map { it.groupDomain }
         Response(ans.count(), ans)
     }
 
@@ -35,14 +32,42 @@ class IdApi(val uid: Long) {
         UserEntity.new {
             this.vkId = uid
             this.groups = mapper.writeValueAsString(emptyList<String>())
+            this.seenPostIds = mapper.writeValueAsString(emptyList<String>())
+
         }.id.value
     }
 
-    fun addGroupToUser(groupId: Long) = transaction {
+    fun addSeenPost(postId : String) = transaction {
+        val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
+        val seenPostIds = mapper.readValue<List<String>>(user.seenPostIds)
+        user.seenPostIds = mapper.writeValueAsString(seenPostIds + postId)
+        user.flush()
+    }
+
+    fun addGroupToUser(groupId: String) = transaction {
         val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
         val oldGroups = mapper.readValue<List<String>>(user.groups)
-        user.groups = mapper.writeValueAsString(oldGroups + (groupId.toString()))
+        user.groups = mapper.writeValueAsString(oldGroups + groupId)
         user.flush()
+    }
+
+    fun getMemes() : List<PostRequest> = transaction {
+        val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
+        val seenPostIds = mapper.readValue<List<String>>(user.seenPostIds)
+        val posts = PostEntity.all()
+        val postsToSend = mutableListOf<PostRequest>()
+        for (post in posts){
+            if(seenPostIds.contains(post.postId)){
+                continue
+            }
+
+            postsToSend.add(PostRequest(post.groupDomain, post.postId, post.urlPic, post.text))
+            if (postsToSend.size == MEMES_COUNT){
+                break
+            }
+        }
+
+        postsToSend
     }
 
 }
