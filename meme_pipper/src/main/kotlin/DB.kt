@@ -11,8 +11,8 @@ object Post: LongIdTable() {
     val urlPic = varchar("urlPic", 256)
     var text = text("text", "utf8mb4_general_ci")
     val group = reference("group", Group, ReferenceOption.CASCADE)
-    val tag = varchar("tag", 256).default("")
-    var index = text("index", "utf8mb4_general_ci").nullable()
+    val tag = reference("tag", Tag, ReferenceOption.NO_ACTION)
+    var index = text("index", "utf8mb4_general_ci")
 }
 
 object Group: LongIdTable() {
@@ -27,6 +27,18 @@ object User: LongIdTable() {
     val seenPostIds = text("seenPostIds")
 }
 
+object Tag: LongIdTable() {
+    val count = integer("count")
+    val agents = text("agents")
+}
+
+class TagEntity(id: EntityID<Long>): LongEntity(id) {
+    companion object : LongEntityClass<TagEntity>(Tag)
+
+    var count by Tag.count
+    var agents by Tag.agents
+}
+
 class PostEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<PostEntity>(Post)
 
@@ -38,6 +50,7 @@ class PostEntity(id: EntityID<Long>) : LongEntity(id) {
     var tag by Post.tag
     var index by Post.index
 }
+
 
 class GroupEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<GroupEntity>(Group)
