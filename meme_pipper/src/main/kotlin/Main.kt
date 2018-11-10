@@ -153,27 +153,29 @@ fun runSchedule() {
 
 fun writePostsToDB(posts: List<PostRequest>) {
     for (post in posts) {
-        writePostToDB(post)
+        if (!writePostToDB(post)) return
     }
 }
 
-fun writePostToDB(newPost: PostRequest) {
+fun writePostToDB(newPost: PostRequest) : Boolean{
     val newIndexer = Indexer()
     newIndexer.indexImageFromURL(URL(newPost.urlPic))
     val posts = PostEntity.all()
     var tag : TagEntity
     for (post in posts){
+        if (newPost.postId == post.postId) return false
         val indexer = Gson().fromJson(post.index, Indexer().javaClass)
         val index = newIndexer.compaire(indexer)
         if (index == 0){
-            return
+            return true
         }else if (index == 1){
             addPost(newPost, post.tag, newIndexer)
-            return
+            return true
         }
     }
 
     createNewTag(newPost, newIndexer)
+    return true
 }
 
 fun createNewTag(postReq: PostRequest, indexer: Indexer) = transaction {
