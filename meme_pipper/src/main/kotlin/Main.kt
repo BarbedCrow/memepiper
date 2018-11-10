@@ -59,6 +59,12 @@ fun Application.routings() {
                 build(id).getPages()
             }
         }
+        get("/get_memes/{id}") {
+            val id = call.parameters["id"]
+            wrapRespond {
+                build(id).getMemes()
+            }
+        }
     }
 }
 

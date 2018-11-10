@@ -48,11 +48,11 @@ class IdApi(val uid: Long) {
         user.flush()
     }
 
-    fun GetMemes() : List<PostRequest>{
+    fun getMemes() : List<PostRequest> = transaction {
         val user = UserEntity.find { User.vkId eq uid }.firstOrNull() ?: throw BadRequestException()
         val seenPostIds = mapper.readValue<List<String>>(user.seenPostIds)
         val posts = PostEntity.all()
-        var postsToSend = mutableListOf<PostRequest>()
+        val postsToSend = mutableListOf<PostRequest>()
         for (post in posts){
             if(seenPostIds.contains(post.postId)){
                 continue
@@ -64,7 +64,7 @@ class IdApi(val uid: Long) {
             }
         }
 
-        return postsToSend
+        postsToSend
     }
 
 }
