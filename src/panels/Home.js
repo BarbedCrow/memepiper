@@ -4,16 +4,7 @@ import { Panel, ListItem, Button, Group, Div, Avatar, PanelHeader } from '@vkont
 
 const Home = props => (
 	<Panel id={props.id}>
-		<PanelHeader>Example</PanelHeader>
-		{props.fetchedUser &&
-		<Group title="User Data Fetched with VK Connect">
-			<ListItem
-				before={<Avatar src={props.fetchedUser.photo_200}/>}
-				description={props.fetchedUser.city.title}
-			>
-				{`${props.fetchedUser.first_name} ${props.fetchedUser.last_name}`}
-			</ListItem>
-		</Group>}
+		<PanelHeader>Meme piper</PanelHeader>
 
 		<Group title="Navigation Example">
 			<Div>
