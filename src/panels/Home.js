@@ -7,13 +7,12 @@ const Home = props => (
     <Panel id={props.id}>
         <PanelHeader>Meme piper</PanelHeader>
 
-
         {props.memes.map((meme) => (
             <Group>
                 <p>{meme.text}</p>
                 <CellButton className="postImg" onClick={props.openSimilar} data-to="similar-memes"
-                            data-similar={meme.id}>
-                    <img className="postImg" src={meme.url}/>
+                            data-similar={meme.postId}>
+                    <img className="postImg" src={meme.urlPic}/>
                 </CellButton>
             </Group>
         ))}

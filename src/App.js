@@ -2,6 +2,7 @@ import React from 'react';
 import connect from '@vkontakte/vkui-connect';
 import {View} from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
+import axios from 'axios';
 
 import Home from './panels/Home';
 import SimilarMemes from './panels/SimilarMemes';
@@ -14,16 +15,7 @@ class App extends React.Component {
             activePanel: 'home',
             fetchedUser: null,
             similarId: 0,
-            memes: [{
-                "id": 1,
-                "text": "Text 1",
-                "url": "https://pp.userapi.com/c830509/v830509583/1d7a60/NRjOKwLLy-8.jpg"
-            },
-            {
-                "id": 2,
-                "text": "Text 2",
-                "url": "https://pp.userapi.com/c830509/v830509583/1d7a60/NRjOKwLLy-8.jpg"
-            }],
+            memes: [],
             similarMemes: [{
                 "id": 4,
                 "text": "Similar Pikachu",
@@ -44,6 +36,13 @@ class App extends React.Component {
             }
         });
         connect.send('VKWebAppGetUserInfo', {});
+        this.getMemes();
+    }
+
+    getMemes() {
+        axios.get("http://95.213.28.127:8080/get_memes/1").then(response => {
+            this.setState({memes: response.data});
+        })
     }
 
     go = (e) => {
