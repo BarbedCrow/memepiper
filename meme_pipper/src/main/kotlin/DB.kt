@@ -11,7 +11,7 @@ object Post: LongIdTable() {
     val urlPic = varchar("urlPic", 256)
     var text = text("text", "utf8mb4_general_ci")
     val group = reference("group", Group, ReferenceOption.CASCADE)
-    val tag = reference("tag", Tag, ReferenceOption.NO_ACTION)
+    var tag = reference("tag", Tag, ReferenceOption.NO_ACTION).nullable()
     var index = text("index", "utf8mb4_general_ci")
 }
 

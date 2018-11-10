@@ -25,7 +25,6 @@ import java.io.FileInputStream
 import java.net.URL
 import java.util.*
 import kotlin.concurrent.schedule
-import io.ktor.network.tls.certificates.*
 
 object Prop {
     val prop = Properties()
@@ -59,7 +58,6 @@ fun createSSL(args: Array<String>) {
     val file = File("build/temporary.jks")
     if (!file.exists()) {
         file.parentFile.mkdirs()
-        generateCertificate(file)
     }
     // run embedded server
     embeddedServer(Netty, commandLineEnvironment(args)).start()
@@ -125,6 +123,15 @@ fun Application.routings() {
                 build(id).addUser()
             }
         }
+        get("/get_memes_similar/{id}&{postId}"){
+            val id = call.parameters["id"]
+            val postId = call.parameters["postId"]
+            if (postId == null) call.respond(HttpStatusCode.BadRequest) else {
+                wrapRespond {
+                    build(id).getMemesSimilarTo(postId)
+                }
+            }
+        }
     }
 }
 
@@ -146,9 +153,36 @@ fun runSchedule() {
 
 fun writePostsToDB(posts: List<PostRequest>) {
     for (post in posts) {
-
         writePostToDB(post)
     }
+}
+
+fun writePostToDB(newPost: PostRequest) {
+    val newIndexer = Indexer()
+    newIndexer.indexImageFromURL(URL(newPost.urlPic))
+    val posts = PostEntity.all()
+    var tag : TagEntity
+    for (post in posts){
+        val indexer = Gson().fromJson(post.index, Indexer().javaClass)
+        val index = newIndexer.compaire(indexer)
+        if (index == 0){
+            return
+        }else if (index == 1){
+            addPost(newPost, post.tag, newIndexer)
+            return
+        }
+    }
+
+    createNewTag(newPost, newIndexer)
+}
+
+fun createNewTag(postReq: PostRequest, indexer: Indexer) = transaction {
+    val post = addPost(postReq, null, indexer)
+    val tag = TagEntity.new {
+        agents = jacksonObjectMapper().writeValueAsString(listOf(post.id))
+    }
+
+    post.tag = tag.id
 }
 
 fun getTag(indexer: Indexer) = transaction {
@@ -171,11 +205,6 @@ fun getIndex(urlPic: String): String {
     val str= Gson().toJson(indexer)
     println(str)
     return str
-}
-
-fun writePostToDB(post: PostRequest) {
-    print(post.urlPic)
-    addPost(post)
 }
 
 data class PostRequest(
