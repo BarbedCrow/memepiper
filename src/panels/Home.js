@@ -1,18 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Panel, ListItem, Button, Group, Div, Avatar, PanelHeader } from '@vkontakte/vkui';
+import './postImg.css';
+import { Panel, ListItem, Button, Group, Div, Avatar, PanelHeader, CellButton } from '@vkontakte/vkui';
 
 const Home = props => (
 	<Panel id={props.id}>
 		<PanelHeader>Meme piper</PanelHeader>
 
-		<Group title="Navigation Example">
-			<Div>
-				<Button size="xl" level="2" onClick={props.go} data-to="persik">
-					Show me the Persik
-				</Button>
-			</Div>
-		</Group>
+		<Group>
+            <p>Это мем!</p>
+            <CellButton className="postImg" onClick={props.go} data-to="similar-memes">
+                <img className="postImg" src="https://pp.userapi.com/c830509/v830509583/1d7a60/NRjOKwLLy-8.jpg"/>
+            </CellButton>
+        </Group>
+        <Group>
+            <p>Это второй мем!</p>
+            <CellButton className="postImg" onClick={props.go} data-to="similar-memes">
+                <img className="postImg" src="https://pp.userapi.com/c846021/v846021363/1243cf/MooEo9q0Vdo.jpg"/>
+            </CellButton>
+        </Group>
 	</Panel>
 );
 

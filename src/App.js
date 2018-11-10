@@ -3,7 +3,7 @@ import { View } from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
 
 import Home from './panels/Home';
-import Persik from './panels/Persik';
+import SimilarMemes from './panels/SimilarMemes';
 
 class App extends React.Component {
 	constructor(props) {
@@ -22,7 +22,7 @@ class App extends React.Component {
 		return (
 			<View activePanel={this.state.activePanel}>
 				<Home id="home" fetchedUser={this.state.fetchedUser} go={this.go} />
-				<Persik id="persik" go={this.go} />
+				<SimilarMemes id="similar-memes" go={this.go} />
 			</View>
 		);
 	}

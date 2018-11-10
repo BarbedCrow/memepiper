@@ -1,0 +1,6 @@
+.postImg {
+    display: block;
+    width: 100%;
+    max-width: 1080px;
+    margin: 5px auto;
+}
