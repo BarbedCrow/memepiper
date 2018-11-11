@@ -18,6 +18,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.semanticmetadata.lire.sampleapp.Indexer
+import net.semanticmetadata.lire.sampleapp.IndexerCol
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
@@ -175,6 +176,8 @@ fun writePostsToDB(posts: List<PostRequest>) {
 fun writePostToDB(newPost: PostRequest): Boolean = transaction {
     val newIndexer = Indexer()
     newIndexer.indexImageFromURL(URL(newPost.urlPic))
+    val newIndexer2 = IndexerCol()
+    newIndexer2.indexImageFromURL(URL(newPost.urlPic))
     print("hui-1")
     val posts = PostEntity.all()
     print("hui0")
@@ -187,11 +190,15 @@ fun writePostToDB(newPost: PostRequest): Boolean = transaction {
         print("hui2")
         val index = newIndexer.compaire(indexer)
         print("hui3")
-        if (index == 0) {
-            return@transaction true
-        } else if (index == 1) {
-            addPost(newPost, post.tag, newIndexer)
-            return@transaction true
+        val Indexer2 = IndexerCol()
+        Indexer2.indexImageFromURL(URL(post.urlPic))
+        if (newIndexer2.compaire(Indexer2)) {
+            if (index == 0) {
+                return@transaction true
+            } else if (index == 1) {
+                addPost(newPost, post.tag, newIndexer)
+                return@transaction true
+            }
         }
     }
 
