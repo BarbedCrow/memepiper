@@ -9,10 +9,10 @@ object Post: LongIdTable() {
     val groupDomain = varchar("groupDomain", 128)
     val postId = varchar("postId", 256)
     val urlPic = varchar("urlPic", 256)
-    var text = text("text", "utf8mb4_general_ci")
+    var text = text("text", "utf8mb4_unicode_ci")
     val group = reference("group", Group, ReferenceOption.CASCADE)
     var tag = reference("tag", Tag, ReferenceOption.NO_ACTION).nullable()
-    var index = text("index", "utf8mb4_general_ci")
+    var index = text("index", "utf8mb4_unicode_ci")
 }
 
 object Group: LongIdTable() {
