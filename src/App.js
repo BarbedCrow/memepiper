@@ -39,11 +39,18 @@ class App extends React.Component {
         this.getMemes();
     }
 
-    getMemes() {
-        axios.get("http://95.213.28.127:8080/get_memes/1").then(response => {
-            this.setState({memes: response.data});
+    getMemes = () => {
+        axios.get("https://95.213.28.127:8443/get_memes/1").then(response => {
+            this.setState({memes: this.state.memes.concat(response.data)});
+            console.log(this.state.memes);
+            // var a = this.state.memes;
+            // for (var i = 0; i < response.data.length; i++) {
+            //     a.push(response.data[i]);
+            // }
+            // console.log(a);
+            // this.setState({memes: a});
         })
-    }
+    };
 
     go = (e) => {
         this.setState({activePanel: e.currentTarget.dataset.to});
@@ -60,7 +67,7 @@ class App extends React.Component {
         return (
             <View activePanel={this.state.activePanel}>
                 <Home id="home" fetchedUser={this.state.fetchedUser} go={this.go} openSimilar={this.openSimilar}
-                      memes={this.state.memes}/>
+                      memes={this.state.memes} getMemes={this.getMemes}/>
                 <SimilarMemes id="similar-memes" go={this.go} similarId={this.state.similarId}
                               openSimilar={this.openSimilar} similarMemes={this.state.similarMemes}/>
             </View>
