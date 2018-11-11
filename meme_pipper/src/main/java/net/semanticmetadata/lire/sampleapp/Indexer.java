@@ -53,12 +53,12 @@ import java.net.URL;
 public class Indexer {
     private CEDD cedd;
     private FCTH fcth;
-    //private AutoColorCorrelogram autoColorCorrelogram;
+    private AutoColorCorrelogram autoColorCorrelogram;
 
     public Indexer() {
         cedd = new CEDD();
         fcth = new FCTH();
-        //autoColorCorrelogram = new AutoColorCorrelogram();
+        autoColorCorrelogram = new AutoColorCorrelogram();
     }
 
     public void indexImageFromURL(URL url) {
@@ -73,7 +73,7 @@ public class Indexer {
 
         cedd.extract(image);
         fcth.extract(image);
-        //autoColorCorrelogram.extract(image);
+        autoColorCorrelogram.extract(image);
 
         System.out.println("Finished indexing.");
     }
@@ -81,10 +81,12 @@ public class Indexer {
     public int compaire(Indexer ind) {
         double d1 = cedd.getDistance(ind.cedd);
         double d2 = fcth.getDistance(ind.fcth);
-        //double d3 = autoColorCorrelogram.getDistance(ind.autoColorCorrelogram);
+        double d3 = autoColorCorrelogram.getDistance(ind.autoColorCorrelogram);
         System.out.println("CEDD len:" + d1);
         System.out.println("FCTH len:" + d2);
+        System.out.println("Col len:" + d2);
 
+        if (d3 > 50) return 2;
         double sum = (d1 + d2) / 2;
         if (sum < 10) return 0;
         if (sum < 30) return 1;
