@@ -30,12 +30,27 @@ object Prop {
     val prop = Properties()
 }
 
-val initialGroupIds = listOf("-29534144", "-25670128", "-92337511", "-52537634", "-72495085", "-33414947", "-51016572", "-45745333", "-86854270", "-44781847", "-66678575", "19799369", "-36775802", "-46521427")
+val initialGroupIds = listOf(
+    "-29534144",
+    "-25670128",
+    "-92337511",
+    "-52537634",
+    "-72495085",
+    "-33414947",
+    "-51016572",
+    "-45745333",
+    "-86854270",
+    "-44781847",
+    "-66678575",
+    "19799369",
+    "-36775802",
+    "-46521427"
+)
 const val UPDATE_FREQUENCY_MS = 1_000_000L
 val timer = Timer()
 
 @Suppress("unused")
-fun Application.main(args: Array<String>) {
+fun Application.main() {
     initProperties()
     initDB()
     routings()
@@ -71,7 +86,7 @@ fun createSSL(args: Array<String>) {
 //    idApi.addGroupToUser(groupId)
 //    idApi.addPost("zalupa", groupId)
 
-fun initProperties(){
+fun initProperties() {
     Prop.prop.load(FileInputStream("src/main/resources/config.properties"))
 }
 
@@ -123,7 +138,7 @@ fun Application.routings() {
                 build(id).addUser()
             }
         }
-        get("/get_memes_similar/{id}&{postId}"){
+        get("/get_memes_similar/{id}&{postId}") {
             val id = call.parameters["id"]
             val postId = call.parameters["postId"]
             if (postId == null) call.respond(HttpStatusCode.BadRequest) else {
@@ -157,31 +172,37 @@ fun writePostsToDB(posts: List<PostRequest>) {
     }
 }
 
-fun writePostToDB(newPost: PostRequest) : Boolean{
+fun writePostToDB(newPost: PostRequest): Boolean = transaction {
     val newIndexer = Indexer()
     newIndexer.indexImageFromURL(URL(newPost.urlPic))
+    print("hui-1")
     val posts = PostEntity.all()
-    var tag : TagEntity
-    for (post in posts){
-        if (newPost.postId == post.postId) return false
+    print("hui0")
+    var tag: TagEntity
+    print("hui0.5")
+    for (post in posts) {
+        if (newPost.postId == post.postId) return@transaction false
+        print("hui1")
         val indexer = Gson().fromJson(post.index, Indexer().javaClass)
+        print("hui2")
         val index = newIndexer.compaire(indexer)
-        if (index == 0){
-            return true
-        }else if (index == 1){
+        print("hui3")
+        if (index == 0) {
+            return@transaction true
+        } else if (index == 1) {
             addPost(newPost, post.tag, newIndexer)
-            return true
+            return@transaction true
         }
     }
 
     createNewTag(newPost, newIndexer)
-    return true
+    return@transaction true
 }
 
 fun createNewTag(postReq: PostRequest, indexer: Indexer) = transaction {
     val post = addPost(postReq, null, indexer)
     val tag = TagEntity.new {
-        agents = jacksonObjectMapper().writeValueAsString(listOf(post.id))
+        agents = jacksonObjectMapper().writeValueAsString(listOf(post.id.value))
     }
 
     post.tag = tag.id
@@ -191,8 +212,8 @@ fun getTag(indexer: Indexer) = transaction {
     val tags = TagEntity.all().map {
         jacksonObjectMapper().readValue<List<Long>>(it.agents).map { PostEntity[it] }
     }
-    tags.map{ tag ->
-         tag.map {
+    tags.map { tag ->
+        tag.map {
             val another = Gson().fromJson(it.index, Indexer().javaClass)
             val value = indexer.compaire(indexer)
             if (value == 2) {
@@ -201,10 +222,11 @@ fun getTag(indexer: Indexer) = transaction {
         }
     }
 }
+
 fun getIndex(urlPic: String): String {
     val indexer = Indexer()
     indexer.indexImageFromURL(URL(urlPic))
-    val str= Gson().toJson(indexer)
+    val str = Gson().toJson(indexer)
     println(str)
     return str
 }

@@ -28,14 +28,12 @@ object User: LongIdTable() {
 }
 
 object Tag: LongIdTable() {
-    val count = integer("count")
     val agents = text("agents")
 }
 
 class TagEntity(id: EntityID<Long>): LongEntity(id) {
     companion object : LongEntityClass<TagEntity>(Tag)
 
-    var count by Tag.count
     var agents by Tag.agents
 }
 
