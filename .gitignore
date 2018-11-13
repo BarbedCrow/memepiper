@@ -13,6 +13,11 @@ package-lock.json
 
 # Prod Bundle
 /build
+*/out/**
+*/build/**
+**/config.properties
 
 .vscode
 .idea
+
+*/.gradle
