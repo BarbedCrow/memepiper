@@ -14,13 +14,9 @@ class App extends React.Component {
         this.state = {
             activePanel: 'home',
             fetchedUser: null,
-            similarId: 0,
+            postId: 0,
             memes: [],
-            similarMemes: [{
-                "id": 4,
-                "text": "Similar Pikachu",
-                "url": "https://i.uaportal.com/gallery/2018/11/9/13.jpg"
-            }]
+            similarMemes: []
         };
     }
 
@@ -39,10 +35,10 @@ class App extends React.Component {
         this.getMemes();
     }
 
-    getMemes = () => {
+    getMemes = (e) => {
         axios.get("https://95.213.28.127:8443/get_memes/1").then(response => {
             this.setState({memes: this.state.memes.concat(response.data)});
-            console.log(this.state.memes);
+            // console.log(this.state.memes);
             // var a = this.state.memes;
             // for (var i = 0; i < response.data.length; i++) {
             //     a.push(response.data[i]);
@@ -52,14 +48,23 @@ class App extends React.Component {
         })
     };
 
+    getSimilarMemes = (e) => {
+        axios.get("https://95.213.28.127:8443/get_memes_similar/1&" + e.postId).then(response => {
+            this.setState({similarMemes: this.state.similarMemes.concat(response.data)});
+            // console.log(this.state.similarMemes);
+        })
+
+    };
+
     go = (e) => {
         this.setState({activePanel: e.currentTarget.dataset.to});
+        this.setState({similarMemes: []});
     };
 
     openSimilar = (e) => {
-        // TODO: get request for similars here!
         this.setState({activePanel: e.currentTarget.dataset.to});
-        this.setState({similarId: e.currentTarget.dataset.similar});
+        this.setState({postId: e.currentTarget.dataset.post});
+        this.getSimilarMemes({"postId": e.currentTarget.dataset.post});
     };
 
 
@@ -68,8 +73,9 @@ class App extends React.Component {
             <View activePanel={this.state.activePanel}>
                 <Home id="home" fetchedUser={this.state.fetchedUser} go={this.go} openSimilar={this.openSimilar}
                       memes={this.state.memes} getMemes={this.getMemes}/>
-                <SimilarMemes id="similar-memes" go={this.go} similarId={this.state.similarId}
-                              openSimilar={this.openSimilar} similarMemes={this.state.similarMemes}/>
+                <SimilarMemes id="similar-memes" go={this.go} postId={this.state.postId}
+                              openSimilar={this.openSimilar} similarMemes={this.state.similarMemes}
+                              getSimilarMemes={this.getSimilarMemes}/>
             </View>
         );
     }

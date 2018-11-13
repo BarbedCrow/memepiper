@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './postImg.css';
-import {Panel, ListItem, Button, Group, Div, Avatar, PanelHeader, CellButton, Spinner} from '@vkontakte/vkui';
+import {Panel, Group, PanelHeader, CellButton, Spinner} from '@vkontakte/vkui';
 import InfiniteScroll from "react-infinite-scroll-component";
 // import InfiniteScroll from 'react-infinite-scroller';
 
@@ -30,7 +30,7 @@ const Home = props => (
                 <Group>
                     <p>{meme.text}</p>
                     <CellButton className="postImg" onClick={props.openSimilar} data-to="similar-memes"
-                                data-similar={meme.postId}>
+                                data-post={meme.postId}>
                         <img className="postImg" src={meme.urlPic}/>
                     </CellButton>
                 </Group>
